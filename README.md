@@ -176,7 +176,7 @@ stateDiagram-v2
 | 주문 | 주문 미리보기 | POST | `/api/orders/preview` 🔒 | 박지민 |
 | 결제 | 모의 결제 승인 | POST | `/api/payments` 🔒 | 최정이 |
 | 결제 | 결제 단건 조회 | GET | `/api/payments/{paymentId}` 🔒 | 최정이 |
-| 결제 | 주문 취소 (전액) | POST | `/api/orders/{orderId}/cancel` 🔒 | 최정이 |
+| 결제 | 주문 취소 (전액) | POST | `/api/payments/{paymentId}/cancel` 🔒 | 최정이 |
 
 🔒 = 인증 필요 (`Authorization: Bearer {token}`)
 
