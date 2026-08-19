@@ -1,5 +1,6 @@
 package _team.commerce.domain.cart.entity;
 
+import _team.commerce.domain.product.entity.Product;
 import _team.commerce.global.common.BaseEntity;
 import _team.commerce.global.exception.CustomException;
 import _team.commerce.global.exception.ErrorCode;
@@ -14,10 +15,19 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.UniqueConstraint;
 
 @Getter
 @Entity
-@Table(name = "cart_item")
+@Table(
+        name = "cart_item",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_cart_item_cart_product",
+                        columnNames = {"cart_id", "product_id"}
+                )
+        }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CartItem extends BaseEntity {
 
@@ -29,18 +39,21 @@ public class CartItem extends BaseEntity {
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
-    // TODO(Product 도메인 구현 후): Product product 연관관계 추가
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     private Integer quantity;
 
-    private CartItem(Cart cart, Integer quantity) {
+    private CartItem(Cart cart, Product product, Integer quantity) {
         validateQuantity(quantity);
         this.cart = cart;
+        this.product = product;
         this.quantity = quantity;
     }
 
-    public static CartItem create(Cart cart, Integer quantity) {
-        return new CartItem(cart, quantity);
+    public static CartItem create(Cart cart, Product product, Integer quantity) {
+        return new CartItem(cart, product, quantity);
     }
 
     public void changeQuantity(Integer quantity) {
