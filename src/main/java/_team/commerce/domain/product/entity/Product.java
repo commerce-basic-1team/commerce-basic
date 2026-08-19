@@ -1,6 +1,8 @@
 package _team.commerce.domain.product.entity;
 
 import _team.commerce.global.common.BaseEntity;
+import _team.commerce.global.exception.CustomException;
+import _team.commerce.global.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -54,5 +56,27 @@ public class Product extends BaseEntity {
             ProductCategory category
     ) {
         return new Product(name, price, stock, description, category);
+    }
+
+    public void decreaseStock(int quantity) {
+        validatePositiveQuantity(quantity);
+
+        if (stock < quantity) {
+            throw new CustomException(ErrorCode.OUT_OF_STOCK);
+        }
+
+        this.stock -= quantity;
+    }
+
+    public void increaseStock(int quantity) {
+        validatePositiveQuantity(quantity);
+
+        this.stock += quantity;
+    }
+
+    private void validatePositiveQuantity(int quantity) {
+        if (quantity <= 0) {
+            throw new CustomException(ErrorCode.INVALID_INPUT);
+        }
     }
 }
