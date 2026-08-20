@@ -1,6 +1,6 @@
-package _team.commerce.domain.auth.repository;
+package _team.commerce.domain.member.repository;
 
-import _team.commerce.domain.auth.entity.Member;
+import _team.commerce.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
