@@ -2,6 +2,7 @@ package _team.commerce.domain.order.controller;
 
 import _team.commerce.domain.order.controller.dto.OrderCreateRequest;
 import _team.commerce.domain.order.controller.dto.OrderCreateResponse;
+import _team.commerce.domain.order.controller.dto.OrderDetailResponse;
 import _team.commerce.domain.order.controller.service.OrderService;
 import _team.commerce.global.common.ApiResponse;
 import jakarta.validation.Valid;
@@ -34,4 +35,18 @@ public class OrderController {
                 ApiResponse.success(response)
         );
     }
+    @GetMapping("/{orderId}")
+    public ResponseEntity<ApiResponse<OrderDetailResponse>> getOrderDetail(
+
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long orderId
+    ) {
+        OrderDetailResponse response =
+                orderService.getOrderDetail(memberId, orderId);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(response)
+        );
+    }
+
 }

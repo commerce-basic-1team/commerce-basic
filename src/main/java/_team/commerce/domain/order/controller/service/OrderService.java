@@ -1,5 +1,6 @@
 package _team.commerce.domain.order.controller.service;
 
+import _team.commerce.domain.order.controller.dto.OrderDetailResponse;
 import _team.commerce.domain.member.entity.Member;
 import _team.commerce.domain.member.repository.MemberRepository;
 import _team.commerce.domain.order.controller.dto.OrderCancelRequest;
@@ -146,4 +147,24 @@ public class OrderService {
             product.increaseStock(orderItem.getQuantity());
         }
     }
+
+
+    public OrderDetailResponse getOrderDetail(
+            Long memberId,
+            Long orderId
+    ) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() ->
+                        new CustomException(ErrorCode.ORDER_NOT_FOUND)
+                );
+
+        if (!order.getMember().getId().equals(memberId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN_ACCESS);
+        }
+
+
+        return OrderDetailResponse.from(order);
+    }
 }
+
