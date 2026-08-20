@@ -1,7 +1,7 @@
 package _team.commerce.domain.cart.service;
 
-import _team.commerce.domain.auth.entity.Member;
-import _team.commerce.domain.auth.repository.MemberRepository;
+import _team.commerce.domain.member.entity.Member;
+import _team.commerce.domain.member.repository.MemberRepository;
 import _team.commerce.domain.cart.dto.request.CartItemCreateRequest;
 import _team.commerce.domain.cart.dto.request.CartItemQuantityUpdateRequest;
 import _team.commerce.domain.cart.dto.response.CartItemResponse;
