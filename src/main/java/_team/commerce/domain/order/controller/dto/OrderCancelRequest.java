@@ -1,5 +1,11 @@
 package _team.commerce.domain.order.controller.dto;
 
-public record OrderCancelRequest() {
+import jakarta.validation.constraints.NotBlank;
 
+public record OrderCancelRequest(
+
+        @NotBlank(message = "취소 사유는 필수입니다.")
+        String reason
+
+) {
 }
