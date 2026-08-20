@@ -2,13 +2,15 @@ package _team.commerce.domain.order.entity;
 
 import _team.commerce.domain.auth.entity.Member;
 import _team.commerce.global.common.BaseEntity;
+import _team.commerce.global.exception.CustomException;
 import _team.commerce.global.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -28,7 +30,7 @@ public class Order extends BaseEntity {
     private String orderNumber;
 
     @Column(nullable = false)
-    private BigDecimal totalAmount;
+    private Long totalAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -36,11 +38,18 @@ public class Order extends BaseEntity {
 
     private String cancelReason;
 
+    @OneToMany(
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<OrderItem> orderItems = new ArrayList<>();
+
 
     private Order(
             Member member,
             String orderNumber,
-            BigDecimal totalAmount
+            Long totalAmount
     ) {
         this.member = member;
         this.orderNumber = orderNumber;
@@ -48,26 +57,32 @@ public class Order extends BaseEntity {
         this.status = OrderStatus.PENDING_PAYMENT;
     }
 
-
     public static Order create(
             Member member,
             String orderNumber,
-            BigDecimal totalAmount
+            Long totalAmount
     ) {
-        return new Order(member, orderNumber, totalAmount);
+        return new Order(
+                member,
+                orderNumber,
+                totalAmount
+        );
     }
 
+    public void addOrderItem(OrderItem orderItem) {
+
+        this.orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
 
     public void complete() {
         this.status = OrderStatus.COMPLETED;
     }
 
-
     public void cancel(String reason) {
+
         if (this.status == OrderStatus.CANCELED) {
-            throw new IllegalStateException(
-                    ErrorCode.ALREADY_CANCELED.getMessage()
-            );
+            throw new CustomException(ErrorCode.ALREADY_CANCELED);
         }
 
         this.status = OrderStatus.CANCELED;
