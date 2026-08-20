@@ -1,5 +1,7 @@
 package _team.commerce.domain.auth.controller;
 
+import _team.commerce.domain.auth.dto.AuthResponse;
+import _team.commerce.domain.auth.dto.LoginRequest;
 import _team.commerce.domain.auth.dto.SignupRequest;
 import _team.commerce.domain.auth.dto.SignupResponse;
 import _team.commerce.domain.auth.service.AuthService;
@@ -23,11 +25,22 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<SignupResponse>> signup(
             @Valid @RequestBody SignupRequest request
-            ) {
+    ) {
         SignupResponse response = authService.signup(request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+                .body(ApiResponse.success(response));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<AuthResponse>> login(
+            @Valid @RequestBody LoginRequest request
+    ) {
+        AuthResponse response = authService.login(request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(ApiResponse.success(response));
     }
 }
