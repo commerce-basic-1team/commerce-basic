@@ -100,7 +100,7 @@ public class OrderService {
 
 
         paymentRepository.save(
-                Payment.createPending(savedOrder.getId())
+                Payment.createPending(savedOrder)
         );
 
 

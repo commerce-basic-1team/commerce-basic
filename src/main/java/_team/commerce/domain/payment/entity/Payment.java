@@ -14,6 +14,10 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import _team.commerce.domain.order.entity.Order;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 import java.time.LocalDateTime;
 
@@ -27,7 +31,9 @@ public class Payment extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO(주문 도메인 머지 후): @ManyToOne(fetch = LAZY) Order order 필드 추가
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false, unique = true)
+    private Order order;
 
     @Column(nullable = false)
     private Long amount;
@@ -40,16 +46,17 @@ public class Payment extends BaseEntity {
 
     private LocalDateTime canceledAt;
 
-    private Payment(Long amount) {
-        this.amount = amount;
+    private Payment(Order order) {
+        this.order = order;
+        this.amount = order.getTotalAmount();
         this.status = PaymentStatus.PENDING;
     }
 
     /**
      * 주문 생성 시점의 결제 사전 기록. 상태는 항상 대기로 시작한다.
      */
-    public static Payment createPending(Long amount) {
-        return new Payment(amount);
+    public static Payment createPending(Order order) {
+        return new Payment(order);
     }
 
     /**
@@ -84,6 +91,10 @@ public class Payment extends BaseEntity {
 
     public boolean isCompleted() {
         return this.status == PaymentStatus.COMPLETED;
+    }
+
+    public boolean isOwnedBy(Long memberId) {
+        return this.order.getMember().getId().equals(memberId);
     }
 
     private void validateStatus(PaymentStatus required) {
