@@ -84,12 +84,7 @@ public class Order extends BaseEntity {
             throw new CustomException(ErrorCode.ALREADY_CANCELED);
         }
 
-        if (this.status != OrderStatus.PENDING_PAYMENT) {
-            throw new CustomException(ErrorCode.INVALID_INPUT);
-        }
-
         this.status = OrderStatus.CANCELED;
-
         this.cancelReason = reason;
     }
 }
