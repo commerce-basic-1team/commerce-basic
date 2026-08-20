@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class OrderController {
 
-    // 주문 관련 비즈니스 로직을 담당하는 Service
     private final OrderService orderService;
 
 
-    // 주문 생성 API
     @PostMapping
     public ResponseEntity<ApiResponse<OrderCreateResponse>> createOrder(
 
