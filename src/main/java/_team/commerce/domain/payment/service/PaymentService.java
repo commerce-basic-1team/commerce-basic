@@ -55,7 +55,7 @@ public class PaymentService {
 
     /**
      * 결제 취소(전액).
-     * 결제 전이면 결제를 실패로, 결제 후면 취소로 전이시키고 재고를 전량 복구한다.
+     * 결제 완료 상태에서만 가능하며, 결제 전 취소는 주문 도메인에서 처리한다.
      */
     @Transactional
     public PaymentResponse cancelPayment(
@@ -66,22 +66,14 @@ public class PaymentService {
         Payment payment = getPaymentById(paymentId);
         validateOwner(payment, memberId);
 
+        payment.cancel();
+
         Order order = payment.getOrder();
-
-        if (payment.isPending()) {
-            payment.fail();
-        } else if (payment.isCompleted()) {
-            payment.cancel();
-        } else {
-            throw new CustomException(ErrorCode.ALREADY_CANCELED);
-        }
-
         order.cancel(request.reason());
         restoreStock(order);
 
         return PaymentResponse.from(payment);
     }
-
     /**
      * 승인 시: 결제 완료 → 주문 완료 → 장바구니 비우기.
      * 재고는 주문 생성 시점에 이미 차감되었으므로 건드리지 않는다.
