@@ -1,4 +1,4 @@
-package _team.commerce.domain.order.controller.entity;
+package _team.commerce.domain.order.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

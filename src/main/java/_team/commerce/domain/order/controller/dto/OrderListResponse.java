@@ -1,5 +1,5 @@
 package _team.commerce.domain.order.controller.dto;
 
-public class OrderListResponse {
+public record OrderListResponse (){
 
 }
