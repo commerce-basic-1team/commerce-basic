@@ -1,9 +1,15 @@
 package _team.commerce.domain.cart.controller;
 
+import _team.commerce.domain.cart.dto.request.CartItemCreateRequest;
+import _team.commerce.domain.cart.dto.request.CartItemQuantityUpdateRequest;
+import _team.commerce.domain.cart.dto.response.CartResponse;
 import _team.commerce.domain.cart.service.CartService;
+import _team.commerce.global.common.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -12,25 +18,67 @@ public class CartController {
 
     private final CartService cartService;
 
-    /*
-     * TODO(Auth JWT 구현 후)
-     *
-     * 현재 로그인한 회원의 memberId를 JWT에서 가져온 뒤
-     * CartService와 연동하여 아래 API를 구현한다.
-     *
-     * 1. 장바구니 조회
-     * GET /api/cart
-     *
-     * 2. 상품 담기
-     * POST /api/cart/items
-     *
-     * 3. 상품 수량 변경
-     * PATCH /api/cart/items/{cartItemId}
-     *
-     * 4. 장바구니 상품 개별 삭제
-     * DELETE /api/cart/items/{cartItemId}
-     *
-     * 5. 장바구니 전체 비우기
-     * DELETE /api/cart
+    /**
+     * 장바구니 조회
      */
+    @GetMapping
+    public ResponseEntity<ApiResponse<CartResponse>> getCart(
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success(cartService.getCart(memberId))
+        );
+    }
+
+    /**
+     * 상품 담기
+     */
+    @PostMapping("/items")
+    public ResponseEntity<ApiResponse<Void>> addItem(
+            @AuthenticationPrincipal Long memberId,
+            @RequestBody @Valid CartItemCreateRequest request
+    ) {
+        cartService.addItem(memberId, request);
+
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    /**
+     * 장바구니 상품 수량 변경
+     */
+    @PatchMapping("/items/{cartItemId}")
+    public ResponseEntity<ApiResponse<Void>> updateQuantity(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long cartItemId,
+            @RequestBody @Valid CartItemQuantityUpdateRequest request
+    ) {
+        cartService.updateQuantity(memberId, cartItemId, request);
+
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    /**
+     * 장바구니 상품 개별 삭제
+     */
+    @DeleteMapping("/items/{cartItemId}")
+    public ResponseEntity<ApiResponse<Void>> deleteItem(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long cartItemId
+    ) {
+        cartService.deleteItem(memberId, cartItemId);
+
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    /**
+     * 장바구니 전체 비우기
+     */
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<Void>> clearCart(
+            @AuthenticationPrincipal Long memberId
+    ) {
+        cartService.clearCart(memberId);
+
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
 }
