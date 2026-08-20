@@ -7,6 +7,8 @@ import _team.commerce.domain.order.controller.dto.OrderCreateResponse;
 import _team.commerce.domain.order.controller.repository.OrderRepository;
 import _team.commerce.domain.order.entity.Order;
 import _team.commerce.domain.order.entity.OrderItem;
+import _team.commerce.domain.payment.entity.Payment;
+import _team.commerce.domain.payment.repository.PaymentRepository;
 import _team.commerce.domain.product.entity.Product;
 import _team.commerce.domain.product.repository.ProductRepository;
 import _team.commerce.global.exception.CustomException;
@@ -28,6 +30,9 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
 
+    // 주문 생성 후 PENDING 상태의 결제를 저장하기 위한 Repository
+    private final PaymentRepository paymentRepository;
+
 
     @Transactional
     public OrderCreateResponse createOrder(
@@ -39,6 +44,7 @@ public class OrderService {
                 .orElseThrow(() ->
                         new CustomException(ErrorCode.MEMBER_NOT_FOUND)
                 );
+
 
         List<OrderItem> orderItems = new ArrayList<>();
 
@@ -62,6 +68,7 @@ public class OrderService {
                     itemRequest.quantity(),
                     product.getPrice()
             );
+
 
             orderItems.add(orderItem);
 
@@ -90,6 +97,11 @@ public class OrderService {
 
 
         Order savedOrder = orderRepository.save(order);
+
+
+        paymentRepository.save(
+                Payment.createPending(savedOrder.getId())
+        );
 
 
         return new OrderCreateResponse(
