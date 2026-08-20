@@ -1,6 +1,6 @@
 package _team.commerce.domain.order.entity;
 
-import _team.commerce.domain.auth.entity.Member;
+import _team.commerce.domain.member.entity.Member;
 import _team.commerce.global.common.BaseEntity;
 import _team.commerce.global.exception.CustomException;
 import _team.commerce.global.exception.ErrorCode;
@@ -45,7 +45,6 @@ public class Order extends BaseEntity {
     )
     private List<OrderItem> orderItems = new ArrayList<>();
 
-
     private Order(
             Member member,
             String orderNumber,
@@ -54,6 +53,7 @@ public class Order extends BaseEntity {
         this.member = member;
         this.orderNumber = orderNumber;
         this.totalAmount = totalAmount;
+
         this.status = OrderStatus.PENDING_PAYMENT;
     }
 
@@ -70,7 +70,6 @@ public class Order extends BaseEntity {
     }
 
     public void addOrderItem(OrderItem orderItem) {
-
         this.orderItems.add(orderItem);
         orderItem.setOrder(this);
     }

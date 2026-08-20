@@ -1,7 +1,8 @@
 package _team.commerce.domain.order.controller.service;
 
-import _team.commerce.domain.auth.entity.Member;
-import _team.commerce.domain.auth.repository.MemberRepository;
+import _team.commerce.domain.member.entity.Member;
+import _team.commerce.domain.member.repository.MemberRepository;
+import _team.commerce.domain.order.controller.dto.OrderCancelRequest;
 import _team.commerce.domain.order.controller.dto.OrderCreateRequest;
 import _team.commerce.domain.order.controller.dto.OrderCreateResponse;
 import _team.commerce.domain.order.controller.repository.OrderRepository;
@@ -29,8 +30,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
-
-    // 주문 생성 후 PENDING 상태의 결제를 저장하기 위한 Repository
     private final PaymentRepository paymentRepository;
 
 
@@ -110,5 +109,41 @@ public class OrderService {
                 savedOrder.getTotalAmount(),
                 savedOrder.getStatus()
         );
+    }
+    @Transactional
+    public void cancelOrder(
+            Long memberId,
+            Long orderId,
+            OrderCancelRequest request
+    ) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() ->
+                        new CustomException(ErrorCode.ORDER_NOT_FOUND)
+                );
+
+        if (!order.getMember().getId().equals(memberId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN_ACCESS);
+        }
+
+        Payment payment = paymentRepository.findByOrderId(orderId)
+                .orElseThrow(() ->
+                        new CustomException(ErrorCode.PAYMENT_NOT_FOUND)
+                );
+
+        if (!payment.isPending()) {
+            throw new CustomException(ErrorCode.INVALID_PAYMENT_STATUS);
+        }
+
+        order.cancel(request.reason());
+
+        payment.fail();
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+
+            Product product = orderItem.getProduct();
+
+            product.increaseStock(orderItem.getQuantity());
+        }
     }
 }
