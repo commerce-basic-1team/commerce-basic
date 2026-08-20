@@ -1,20 +1,19 @@
-package _team.commerce.domain.auth.dto;
+package _team.commerce.domain.member.dto;
 
 import _team.commerce.domain.member.entity.Member;
 
-public record SignupResponse(
-
+public record MemberResponse(
         Long id,
-        String email,
         String name,
+        String email,
         String phone
 ) {
 
-    public static SignupResponse from(Member member) {
-        return new SignupResponse(
+    public static MemberResponse from(Member member) {
+        return new MemberResponse(
                 member.getId(),
-                member.getEmail(),
                 member.getName(),
+                member.getEmail(),
                 member.getPhone()
         );
     }

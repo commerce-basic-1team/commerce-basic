@@ -1,4 +1,4 @@
-package _team.commerce.domain.auth.entity;
+package _team.commerce.domain.member.entity;
 
 import _team.commerce.global.common.BaseEntity;
 import jakarta.persistence.*;
