@@ -1,5 +1,6 @@
 package _team.commerce.domain.order.controller;
 
+import _team.commerce.domain.order.controller.dto.OrderCancelRequest;
 import _team.commerce.domain.order.controller.dto.OrderCreateRequest;
 import _team.commerce.domain.order.controller.dto.OrderCreateResponse;
 import _team.commerce.domain.order.controller.service.OrderService;
@@ -33,5 +34,15 @@ public class OrderController {
         return ResponseEntity.ok(
                 ApiResponse.success(response)
         );
+    }
+    @PostMapping("/{orderId}/cancel")
+    public ResponseEntity<ApiResponse<Void>> cancelOrder(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long orderId,
+            @Valid @RequestBody OrderCancelRequest request
+    ) {
+        orderService.cancelOrder(memberId, orderId, request);
+
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }

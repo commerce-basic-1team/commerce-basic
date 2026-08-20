@@ -2,6 +2,7 @@ package _team.commerce.domain.order.controller.service;
 
 import _team.commerce.domain.auth.entity.Member;
 import _team.commerce.domain.auth.repository.MemberRepository;
+import _team.commerce.domain.order.controller.dto.OrderCancelRequest;
 import _team.commerce.domain.order.controller.dto.OrderCreateRequest;
 import _team.commerce.domain.order.controller.dto.OrderCreateResponse;
 import _team.commerce.domain.order.controller.repository.OrderRepository;
@@ -20,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -110,5 +110,51 @@ public class OrderService {
                 savedOrder.getTotalAmount(),
                 savedOrder.getStatus()
         );
+
+
+    }
+    @Transactional
+    public void cancelOrder(
+            Long memberId,
+            Long orderId,
+            OrderCancelRequest request
+    ) {
+
+        // 1. 취소하려는 주문 찾기
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() ->
+                        new CustomException(ErrorCode.ORDER_NOT_FOUND)
+                );
+
+
+        // 2. 현재 로그인한 회원의 주문인지 확인
+        // 다른 사람의 주문을 취소하지 못하도록 검사
+        if (!order.getMember().getId().equals(memberId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN_ACCESS);
+        }
+
+
+        // 3. 주문 상태를 취소 상태로 변경하고 취소 사유 저장
+        //
+        // 이미 취소된 주문이면
+        // Order.cancel() 내부에서 ALREADY_CANCELED 예외 발생
+        order.cancel(request.reason());
+
+
+        // 4. 주문했던 상품들의 재고 복구
+        for (OrderItem orderItem : order.getOrderItems()) {
+
+            // 주문 상품에서 실제 상품 가져오기
+            Product product = orderItem.getProduct();
+
+            // 주문했던 수량만큼 재고 증가
+            product.increaseStock(orderItem.getQuantity());
+        }
+
+
+        // 별도로 save()를 호출하지 않아도 됨.
+        //
+        // @Transactional 안에서 조회한 Order와 Product는
+        // JPA가 변경 사항을 감지해서 트랜잭션이 끝날 때 DB에 반영한다.
     }
 }
