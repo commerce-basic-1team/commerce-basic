@@ -2,6 +2,7 @@ package _team.commerce.global.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -11,7 +12,9 @@ import java.util.Date;
 @Component
 public class JwtProvider {
 
-    private final String secretKey = "commerce-team-secret-key-2026-jwt-secret-key";
+    @Value("${jwt.secret}")
+    private String secretKey;
+
     private final long expiration = 1000L * 60 * 60;
 
     private SecretKey getSigningKey() {
