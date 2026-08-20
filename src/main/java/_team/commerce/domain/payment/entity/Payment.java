@@ -48,8 +48,7 @@ public class Payment extends BaseEntity {
 
     private Payment(Order order) {
         this.order = order;
-        // TODO(주문 totalAmount Long 타입 변경 후): this.amount = order.getTotalAmount();
-        this.amount = 0L;
+        this.amount = order.getTotalAmount();
         this.status = PaymentStatus.PENDING;
     }
 

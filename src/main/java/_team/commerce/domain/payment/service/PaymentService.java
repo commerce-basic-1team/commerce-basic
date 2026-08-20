@@ -105,10 +105,9 @@ public class PaymentService {
     }
 
     private void restoreStock(Order order) {
-        // TODO(Order에 @OneToMany orderItems 추가 후 주석 해제)
-        // order.getOrderItems().forEach(orderItem ->
-        //         orderItem.getProduct().increaseStock(orderItem.getQuantity())
-        // );
+        order.getOrderItems().forEach(orderItem ->
+                orderItem.getProduct().increaseStock(orderItem.getQuantity())
+        );
     }
 
     private Payment getPaymentById(Long paymentId) {
