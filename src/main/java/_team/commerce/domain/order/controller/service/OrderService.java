@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import _team.commerce.domain.order.controller.dto.OrderPageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import _team.commerce.domain.order.controller.dto.OrderPreviewResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -180,6 +181,49 @@ public class OrderService {
                 );
 
         return OrderPageResponse.from(orderPage);
+    }
+    public OrderPreviewResponse previewOrder(
+            OrderCreateRequest request
+    ) {
+
+        List<OrderPreviewResponse.OrderPreviewItemResponse> previewItems =
+                new ArrayList<>();
+
+        Long totalAmount = 0L;
+
+
+        for (OrderCreateRequest.OrderItemRequest itemRequest
+                : request.items()) {
+
+            Product product = productRepository.findById(itemRequest.productId())
+                    .orElseThrow(() ->
+                            new CustomException(ErrorCode.PRODUCT_NOT_FOUND)
+                    );
+
+
+            Long totalPrice =
+                    product.getPrice() * itemRequest.quantity();
+
+
+            previewItems.add(
+                    new OrderPreviewResponse.OrderPreviewItemResponse(
+                            product.getId(),
+                            product.getName(),
+                            product.getPrice(),
+                            itemRequest.quantity(),
+                            totalPrice
+                    )
+            );
+
+
+            totalAmount += totalPrice;
+        }
+
+
+        return new OrderPreviewResponse(
+                previewItems,
+                totalAmount
+        );
     }
 }
 
