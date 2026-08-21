@@ -18,6 +18,9 @@ import _team.commerce.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import _team.commerce.domain.order.controller.dto.OrderPageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,7 +151,6 @@ public class OrderService {
         }
     }
 
-
     public OrderDetailResponse getOrderDetail(
             Long memberId,
             Long orderId
@@ -165,6 +167,19 @@ public class OrderService {
 
 
         return OrderDetailResponse.from(order);
+    }
+    public OrderPageResponse getOrderList(
+            Long memberId,
+            Pageable pageable
+    ) {
+
+        Page<Order> orderPage =
+                orderRepository.findByMemberId(
+                        memberId,
+                        pageable
+                );
+
+        return OrderPageResponse.from(orderPage);
     }
 }
 
