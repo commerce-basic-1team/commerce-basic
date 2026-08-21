@@ -87,4 +87,18 @@ public class OrderController {
                 ApiResponse.success(null)
         );
     }
+    // 주문서 미리보기
+    @PostMapping("/preview")
+    public ResponseEntity<ApiResponse<OrderPreviewResponse>> previewOrder(
+
+            @Valid @RequestBody OrderCreateRequest request
+    ) {
+
+        OrderPreviewResponse response =
+                orderService.previewOrder(request);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(response)
+        );
+    }
 }
