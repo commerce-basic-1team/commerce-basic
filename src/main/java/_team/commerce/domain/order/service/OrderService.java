@@ -1,12 +1,12 @@
-package _team.commerce.domain.order.controller.service;
+package _team.commerce.domain.order.service;
 
-import _team.commerce.domain.order.controller.dto.OrderDetailResponse;
+import _team.commerce.domain.order.dto.OrderDetailResponse;
 import _team.commerce.domain.member.entity.Member;
 import _team.commerce.domain.member.repository.MemberRepository;
-import _team.commerce.domain.order.controller.dto.OrderCancelRequest;
-import _team.commerce.domain.order.controller.dto.OrderCreateRequest;
-import _team.commerce.domain.order.controller.dto.OrderCreateResponse;
-import _team.commerce.domain.order.controller.repository.OrderRepository;
+import _team.commerce.domain.order.dto.OrderCancelRequest;
+import _team.commerce.domain.order.dto.OrderCreateRequest;
+import _team.commerce.domain.order.dto.OrderCreateResponse;
+import _team.commerce.domain.order.repository.OrderRepository;
 import _team.commerce.domain.order.entity.Order;
 import _team.commerce.domain.order.entity.OrderItem;
 import _team.commerce.domain.payment.entity.Payment;
@@ -18,10 +18,10 @@ import _team.commerce.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import _team.commerce.domain.order.controller.dto.OrderPageResponse;
+import _team.commerce.domain.order.dto.OrderPageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import _team.commerce.domain.order.controller.dto.OrderPreviewResponse;
+import _team.commerce.domain.order.dto.OrderPreviewResponse;
 
 import java.util.ArrayList;
 import java.util.List;
