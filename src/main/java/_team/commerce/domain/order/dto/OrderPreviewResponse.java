@@ -1,4 +1,4 @@
-package _team.commerce.domain.order.controller.dto;
+package _team.commerce.domain.order.dto;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package _team.commerce.domain.order.controller.repository;
+package _team.commerce.domain.order.repository;
 
 import _team.commerce.domain.order.entity.Order;
 import org.springframework.data.domain.Page;

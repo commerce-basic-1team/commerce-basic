@@ -1,7 +1,7 @@
 package _team.commerce.domain.order.controller;
 
-import _team.commerce.domain.order.controller.dto.*;
-import _team.commerce.domain.order.controller.service.OrderService;
+import _team.commerce.domain.order.service.OrderService;
+import _team.commerce.domain.order.dto.*;
 import _team.commerce.global.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
